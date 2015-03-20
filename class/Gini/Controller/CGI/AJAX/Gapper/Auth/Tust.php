@@ -186,4 +186,12 @@ class Tust extends \Gini\Controller\CGI
     {
         return $this->showHTML('gapper/auth/tust/register', []);
     }
+
+    public function actionEditInfo()
+    {
+        return $this->showJSON([
+            'type'=> 'modal',
+            'message'=> (string) V('gapper/auth/tust/register', (array)self::_getCodeRawData())
+        ]);
+    }
 }
