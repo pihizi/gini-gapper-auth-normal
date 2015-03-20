@@ -139,7 +139,7 @@ class Tust extends \Gini\Controller\CLI
 
         try {
             $app = $rpc->gapper->app->getInfo($config['client_id']);
-            $home = $app->url;
+            $home = $app['url'];
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
