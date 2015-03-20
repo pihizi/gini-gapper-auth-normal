@@ -137,6 +137,13 @@ class Tust extends \Gini\Controller\CLI
         $record->password = $password;
         $record->save();
 
+        try {
+            $app = $rpc->gapper->app->getInfo($config['client_id']);
+            $home = $app->url;
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+
         // 创建成功，发送邮件告知用户名和密码
         $mail = \Gini\IoC::construct('\Gini\Mail');
         $mail->to($email, $name)
@@ -145,7 +152,8 @@ class Tust extends \Gini\Controller\CLI
                     'name'=> $name,
                     'email'=> $email,
                     'group'=> $title,
-                    'password'=> $password
+                    'password'=> $password,
+                    'home'=> $home
                 ]))
             ->send();
     }

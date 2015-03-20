@@ -27,8 +27,12 @@
         </style>
     </head>
     <body>
+        <p style="padding-left:0;">
+            <?=H($name)?>, 您好: 
+        </p>
+
         <p>
-            <?=H($name)?>, 您好。我们已经为您的课题组“<?=H($group)?>”开通了账号。
+            我们已经为您的课题组“<?=H($group)?>”开通了账号。
         </p>
 
         <p>
@@ -39,16 +43,18 @@
             密码：<?=H($password)?>
         </p>
 
+        <?php if ($home) { ?>
         <p>
             请点击以下地址进行登录：<br/>
             <a href="<?=H($home)?>"><?=H($home)?></a>
         </p>
+        <?php } ?>
 
         <p>建议您登录之后立即修改密码</p>
 
         <p class="gray">本邮件是系统发出的邮件，请勿直接回复！</p>
         <hr />
-        <p>Gapper.in | <?=H(date('Y-m-d H:i'))?></p>
+        <p>Gapper.in | 天津科技大学采购平台 | <?=H(date('Y-m-d H:i'))?></p>
     </body>
 </html>
 
