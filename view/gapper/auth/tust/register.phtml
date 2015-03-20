@@ -40,7 +40,8 @@
                 </div>
                 <div class="row">
                     <div class="form-group col-xs-6<?=isset($error['email']) ? ' has-error' : ''?>">
-                        <label class="control-label"><?=H(T('PI 邮箱'))?><small class="text-muted">(<?=H(T('邮箱用于登录，一经添加不能修改'))?>)</small></label>
+                        <label class="control-label"><?=H(T('PI 邮箱'))?></label>
+                        <small class="text-muted">(<?=H(T('邮箱用于登录，一经添加不能修改'))?>)</small>
                         <input class="form-control" type="text" name="email" value="<?=$email ? H($email) : ''?>" />
                         <?php if (isset($error['email'])) { ?>
                         <div class="text-danger text-right"><small><?=H($error['email'])?></small></div>
