@@ -36,12 +36,10 @@
                     <span><?=H($address) ?: '--'?></span>
                 </div>
             </div>
-            <div class="modal-footer">
-                <form class="gapper-auth-form" action="ajax/gapper/auth/tust/edit-info">
-                    <input type="submit" class="btn btn-default btn-tust-edit-register-info" value="<?=H(T('修改'))?>" />
-                </form>
+            <div class="modal-footer"><form class="gapper-auth-form" action="ajax/gapper/auth/tust/edit-info">
+                <input type="submit" class="btn btn-default" value="<?=H(T('修改'))?>" />
                 <a target="_blank" href="/ajax/gapper/auth/tust/pdf" class="btn btn-primary"><?=H(T('确认, 去打印'))?></a>
-            </div>
+            </form></div>
         </div>
     </div>
 </div>
