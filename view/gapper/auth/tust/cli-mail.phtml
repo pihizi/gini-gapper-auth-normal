@@ -38,10 +38,12 @@
         <p>
             登录名：<?=H($email)?>
         </p>
-
+    
+        <?php if ($password) { ?>
         <p>
             密码：<?=H($password)?>
         </p>
+        <?php } ?>
 
         <?php if ($home) { ?>
         <p>

@@ -37,21 +37,9 @@ class Tust extends \Gini\Controller\CLI
         $email = $record->email;
         $phone = $record->phone;
         $address = $record->address;
-        $title = "{$department}{$group}";
+        $title = $group;
 
         $rpc = self::getRPC();
-
-        // 如果以email为账号的用户已经存在，直接报错
-        try {
-            $info = $rpc->gapper->user->getInfo($email);
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-        }
-        if ($info['id']) {
-            echo "Email \"{$email}\" 已经被占用！";
-            echo "\n";
-            return;
-        }
 
         $group = Pinyin::pinyin($title, [
             'delimiter'=> '',
@@ -70,15 +58,19 @@ class Tust extends \Gini\Controller\CLI
             return;
         }
 
-        // 注册gapper用户, 以Email为用户名
-        $password = \Gini\Util::randPassword();
+        // 如果以email为账号的用户已经存在，直接报错
         try {
-            $uid = $rpc->gapper->user->registerUser([
-                'username'=> $email,
-                'password'=> $password,
-                'name'=> $name,
-                'email'=> $email
-            ]);
+            $info = $rpc->gapper->user->getInfo($email);
+            $uid = $info['id'];
+            if (!$uid) {
+                $password = \Gini\Util::randPassword();
+                $uid = $rpc->gapper->user->registerUser([
+                    'username'=> $email,
+                    'password'=> $password,
+                    'name'=> $name,
+                    'email'=> $email
+                ]);
+            }
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
@@ -134,7 +126,9 @@ class Tust extends \Gini\Controller\CLI
         }
 
         $record->atime = date('Y-m-d H:i:s');
-        $record->password = $password;
+        if ($password) {
+            $record->password = $password;
+        }
         $record->save();
 
         try {
