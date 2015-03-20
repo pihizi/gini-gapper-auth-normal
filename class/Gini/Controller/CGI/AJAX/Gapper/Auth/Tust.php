@@ -116,7 +116,7 @@ class Tust extends \Gini\Controller\CGI
         case 'email':
             $pattern = '/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/';
             if (!preg_match($pattern, $value)) {
-                return T('请使用正确的Email!');
+                return T('请使用真实的PI邮箱!');
             }
             break;
         case 'department':
