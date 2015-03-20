@@ -48,7 +48,7 @@ class Tust extends \Gini\Controller\CLI
             echo $e->getMessage();
         }
         if ($info['id']) {
-            echo "Email \"{$emai}\" 已经被占用！";
+            echo "Email \"{$email}\" 已经被占用！";
             echo "\n";
             return;
         }
