@@ -1,0 +1,6 @@
+---
+auth:
+    tust:
+        icon: assets/img/gapper-auth-tust/logo-add.png
+        name: 账号开通申请
+...

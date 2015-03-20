@@ -1,0 +1,55 @@
+<html>
+    <head>
+        <style>
+            body {
+                font-size: 12px;
+            }
+            #user {
+                font-weight: bold;
+                color: black;
+            }
+            form {
+                margin-top: 20px;
+            }
+            p {
+                padding: 0 20px;
+            }
+            .blue {
+                color: blue;
+            }
+            .gray {
+                color: #CACACA;
+            }
+            hr {
+                border-bottom: 1px dashed #CACACA;
+                border-top: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <p>
+            <?=H($name)?>, 您好。我们已经为您的课题组“<?=H($group)?>”开通了账号。
+        </p>
+
+        <p>
+            登录名：<?=H($email)?>
+        </p>
+
+        <p>
+            密码：<?=H($password)?>
+        </p>
+
+        <p>
+            请点击以下地址进行登录：<br/>
+            <a href="<?=H($home)?>"><?=H($home)?></a>
+        </p>
+
+        <p>建议您登录之后立即修改密码</p>
+
+        <p class="gray">本邮件是系统发出的邮件，请勿直接回复！</p>
+        <hr />
+        <p>Gapper.in | <?=H(date('Y-m-d H:i'))?></p>
+    </body>
+</html>
+
+

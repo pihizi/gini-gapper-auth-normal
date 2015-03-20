@@ -1,0 +1,17 @@
+{
+    "id": "gapper-auth-tust",
+    "name": "天津科技大学",
+    "description": "Gapper Login UI",
+    "version": "0.1.1-0",
+    "dependencies": {
+        "gini": ">=0.6.0",
+        "mail": "*",
+        "auth": "^0.1.2"
+    },
+    "composer": {
+        "require": {
+            "overtrue/pinyin": "dev-master",
+            "tecnick.com/tcpdf": "dev-master"
+        }
+    }
+}
