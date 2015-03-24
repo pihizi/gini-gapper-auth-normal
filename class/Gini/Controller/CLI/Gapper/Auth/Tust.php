@@ -64,7 +64,7 @@ class Tust extends \Gini\Controller\CLI
         ]);
 
         $secret = \Gini\Config::get('app.tust_secret');
-        if ($code!==hash_hmac('sha1', json_encode($data), $secret)) {
+        if (false===strpos(hash_hmac('sha1', json_encode($data), $secret), $code)) {
             return $this->showError('数据加密无效!');
         }
 
