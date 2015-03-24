@@ -58,11 +58,11 @@ class Tust extends \Gini\Controller\CLI
             return;
         }
 
-        // 如果以email为账号的用户已经存在，直接报错
         try {
             $info = $rpc->gapper->user->getInfo($email);
             $uid = $info['id'];
             if (!$uid) {
+                // 如果以email为账号的用户不存在，尝试创建
                 $password = \Gini\Util::randPassword();
                 $uid = $rpc->gapper->user->registerUser([
                     'username'=> $email,
@@ -95,34 +95,60 @@ class Tust extends \Gini\Controller\CLI
             return;
         }
 
-        // 创建分组
-        try {
-            $gid = $rpc->gapper->group->create([
-                'user'=> (int)$uid,
-                'name'=> $group,
-                'title'=> $title
-            ]);
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-        }
-
-        if (!$gid) {
-            echo "创建group失败! uid:{$uid}";
-            echo "\n";
-            return;
-        }
-
-        // 为新建分组开启当前APP的访问权限
         $config = \Gini\Config::get('gapper.rpc');
+
+        // 如果用户所属的组已经安装了该app, 则不需要再创建组和绑定app的操作
+        $needNewGroup = true;
         try {
-            $bool = $rpc->gapper->app->installTo($config['client_id'], 'group', (int)$gid);
-        } catch (\Exception $e) {
-            echo $e->getMessage();
+            $gps = (array)$rpc->gapper->user->getGroups((int)$uid);
+            foreach ($gps as $gpid=>$gp) {
+                if (!$gpid) continue;
+                if (!$gp['admin']) continue;
+                $apps = (array)$rpc->gapper->group->getApps((int)$gpid);
+                foreach ($apps as $appid=>$app) {
+                    if ($appid===$config['client_id']) {
+                        $needNewGroup = false;
+                        $home = $app['url'];
+                        break;
+                    }
+                }
+                if (!$needNewGroup) break;
+            }
         }
-        if (!$bool) {
-            echo "group绑定app失败! uid:{$uid} gid:{$gid}";
-            echo "\n";
+        catch (\Exception $e) {
+            echo $e->getMessage();
             return;
+        }
+
+        if ($needNewGroup) {
+            // 创建新分组
+            try {
+                $gid = $rpc->gapper->group->create([
+                    'user'=> (int)$uid,
+                    'name'=> $group,
+                    'title'=> $title
+                ]);
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+
+            if (!$gid) {
+                echo "创建group失败! uid:{$uid}";
+                echo "\n";
+                return;
+            }
+
+            // 绑定app
+            try {
+                $bool = $rpc->gapper->app->installTo($config['client_id'], 'group', (int)$gid);
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
+            if (!$bool) {
+                echo "group绑定app失败! uid:{$uid} gid:{$gid}";
+                echo "\n";
+                return;
+            }
         }
 
         $record->atime = date('Y-m-d H:i:s');
@@ -131,11 +157,13 @@ class Tust extends \Gini\Controller\CLI
         }
         $record->save();
 
-        try {
-            $app = $rpc->gapper->app->getInfo($config['client_id']);
-            $home = $app['url'];
-        } catch (\Exception $e) {
-            echo $e->getMessage();
+        if (!$home) {
+            try {
+                $app = $rpc->gapper->app->getInfo($config['client_id']);
+                $home = $app['url'];
+            } catch (\Exception $e) {
+                echo $e->getMessage();
+            }
         }
 
         // 创建成功，发送邮件告知用户名和密码
