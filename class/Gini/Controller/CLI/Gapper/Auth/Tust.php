@@ -11,32 +11,65 @@ class Tust extends \Gini\Controller\CLI
     public function __index($args)
     {
         echo "Available commands:\n";
-        echo "  gini gapper auth tust active [二维码key]\n";
+        echo "  gini gapper auth tust active\n";
     }
 
-    public function actionActive($key)
+    public function actionActive()
     {
-        $key = $key[0];
-        $record = a('qrcode', ['code'=>$key]);
-        if (!$record->id) {
-            echo '没有相关的记录!';
-            echo "\n";
-            return;
+        $code = $this->getData([
+            'code'=> [
+                'title'=> '加密字符串',
+                'example'=> '',
+                'default'=> ''
+            ],
+        ]);
+        $code = $code['code'];
+
+        $data = $this->getData([
+            'wid'=> [
+                'title'=> 'PI工号',
+                'example'=> '',
+                'default'=> ''
+            ],
+            'name'=> [
+                'title'=> 'PI姓名',
+                'example'=> '',
+                'default'=> ''
+            ],
+            'department'=> [
+                'title'=> '学院',
+                'example'=> '',
+                'default'=> ''
+            ],
+            'group'=> [
+                'title'=> '课题组名称',
+                'example'=> '',
+                'default'=> ''
+            ],
+            'email'=> [
+                'title'=> '电子邮箱',
+                'example'=> '',
+                'default'=> ''
+            ],
+            'phone'=> [
+                'title'=> '联系电话',
+                'example'=> '',
+                'default'=> ''
+            ],
+            'address'=> [
+                'title'=> '地址',
+                'example'=> '',
+                'default'=> ''
+            ],
+        ]);
+
+        $secret = \Gini\Config::get('app.tust_secret');
+        if ($code!==hash_hmac('sha1', json_encode($data), $secret)) {
+            return $this->showError('数据加密无效!');
         }
 
-        if ($record->atime > 0) {
-            echo '该用户已经被激活';
-            echo "\n";
-            return;
-        }
+        extract($data);
 
-        $wid = $record->wid;
-        $name = $record->name;
-        $department = $record->department;
-        $group = $record->group;
-        $email = $record->email;
-        $phone = $record->phone;
-        $address = $record->address;
         $title = $group;
 
         $rpc = self::getRPC();
@@ -179,4 +212,39 @@ class Tust extends \Gini\Controller\CLI
                 ]))
             ->send();
     }
+
+    public function getData($data)
+    {
+        $result = [];
+        foreach ($data as $k => $v) {
+            $tmpTitle = $v['title'];
+            $tmpEG = $v['example'] ? " (e.g \e[31m{$v['example']}\e[0m)" : '';
+            $tmpDefault = $v['default'] ? " default value is \e[31m{$v['default']}\e[0m" : '';
+            $tmpData = readline($tmpTitle . $tmpEG . $tmpDefault . ': ');
+            if (isset($v['default']) && !$tmpData) {
+                $tmpData = $v['default'];
+            }
+            if (isset($tmpData) && $tmpData!=='') {
+                $result[$k] = $tmpData;
+            }
+        }
+
+        return $result;
+    }
+
+    public function surround($string)
+    {
+        return "\e[31m" . $string . "\e[0m";
+    }
+
+    public function show($msg)
+    {
+        echo $msg . "\n";
+    }
+
+    public function showError($msg)
+    {
+        $this->show($this->surround($msg));
+    }
+
 }
