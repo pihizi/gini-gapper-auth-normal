@@ -26,8 +26,13 @@ class Tust extends \Gini\Controller\CLI
         $code = $code['code'];
 
         $data = $this->getData([
-            'wid'=> [
-                'title'=> 'PI工号',
+            'department'=> [
+                'title'=> '学院',
+                'example'=> '',
+                'default'=> ''
+            ],
+            'group'=> [
+                'title'=> '课题组名称',
                 'example'=> '',
                 'default'=> ''
             ],
@@ -36,13 +41,8 @@ class Tust extends \Gini\Controller\CLI
                 'example'=> '',
                 'default'=> ''
             ],
-            'department'=> [
-                'title'=> '学院',
-                'example'=> '',
-                'default'=> ''
-            ],
-            'group'=> [
-                'title'=> '课题组名称',
+            'wid'=> [
+                'title'=> 'PI工号',
                 'example'=> '',
                 'default'=> ''
             ],
@@ -63,12 +63,20 @@ class Tust extends \Gini\Controller\CLI
             ],
         ]);
 
+        extract($data);
+
         $secret = \Gini\Config::get('app.tust_secret');
-        if (false===strpos(hash_hmac('sha1', json_encode($data), $secret), $code)) {
+        if (false===strpos(hash_hmac('sha1', json_encode([
+            'wid'=> $wid,
+            'name'=> $name,
+            'department'=> $department,
+            'group'=> $group,
+            'email'=> $email,
+            'phone'=> $phone,
+            'address'=> $address
+        ]), $secret), $code)) {
             return $this->showError('数据加密无效!');
         }
-
-        extract($data);
 
         $title = $group;
 
