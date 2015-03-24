@@ -161,16 +161,7 @@ class Tust extends \Gini\Controller\CGI
         }
 
         self::_setCodeRawData($data);
-        $code = self::_getCode();
-        $qrcode = a('qrcode', ['code'=>$code]);
-        if (!$qrcode->id) {
-            $qrcode->code = $code;
-            foreach ($data as $k=>$v) {
-                $qrcode->$k = $v;
-            }
-            $qrcode->ctime = date('Y-m-d H:i:s');
-            $qrcode->save();
-        }
+
         return $this->showJSON([
             'type'=> 'modal',
             'message'=> (string) V('gapper/auth/tust/confirm', $data)
